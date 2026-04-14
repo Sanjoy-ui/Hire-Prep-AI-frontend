@@ -9,6 +9,7 @@ import axios from 'axios';
 import { ServerUrl } from '../App';
 import { useDispatch } from 'react-redux';
 import { setUserData } from '../redux/userSlice';
+import { showError } from '../utils/toast';
 function Auth({isModel = false}) {
     const dispatch = useDispatch()
 
@@ -26,7 +27,14 @@ function Auth({isModel = false}) {
             
         } catch (error) {
             console.log(error)
-              dispatch(setUserData(null))
+            dispatch(setUserData(null))
+
+            if (error?.code === 'auth/unauthorized-domain') {
+                showError(`This domain (${window.location.hostname}) is not authorized in Firebase Auth.`)
+                return
+            }
+
+            showError(error?.message || 'Google sign-in failed. Please try again.')
         }
     }
   return (
