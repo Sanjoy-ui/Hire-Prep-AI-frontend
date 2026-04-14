@@ -1,0 +1,54 @@
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import axios from "axios"
+import { ServerUrl } from '../App';
+import Step3Report from '../components/Step3Report';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import { showError } from '../utils/toast';
+function InterviewReport() {
+  const {id} = useParams()
+  const [report,setReport] = useState(null);
+   
+  useEffect(()=>{
+    const fetchReport = async () => {
+      try {
+        const result = await axios.get(ServerUrl + "/api/interview/report/" + id , {withCredentials:true})
+
+        console.log(result.data)
+        setReport(result.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    fetchReport()
+  },[])
+
+
+    if (!report) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-gray-500 text-lg">
+            Loading Report...
+          </p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className='min-h-screen flex flex-col'>
+      <Navbar />
+      <div className='flex-1'>
+        <Step3Report report={report}/>
+      </div>
+      <Footer />
+    </div>
+  )
+}
+
+export default InterviewReport
